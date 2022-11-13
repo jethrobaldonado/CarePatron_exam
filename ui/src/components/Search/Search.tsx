@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { InputAdornment, OutlinedInput } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import Box from '@mui/material/Box';
+import { StateContext } from '../../store/DataProvider';
 
 export default function Search() {
+	const { state, dispatch } = useContext(StateContext);
+	const [search, setSearch] = useState('');
+
+	useEffect(() => {
+		dispatch({ type: 'SEARCH_CLIENT', data: search});
+	}, [search]);
+
 	return (
 		<Box sx={{
 			display: 'flex',
@@ -23,8 +31,8 @@ export default function Search() {
 					</InputAdornment>
 				)}
 				placeholder={'Search clients...'}
+				onChange={(event) => setSearch(event.target.value)}
 			/>
 		</Box>
-
 	);
 }

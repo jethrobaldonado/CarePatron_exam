@@ -11,7 +11,7 @@ import ClientModal from '../../components/ClientModal';
 
 function Clients() {
 	const { state, dispatch } = useContext(StateContext);
-	const { clients } = state;
+	const { filteredClients } = state;
 
 	useEffect(() => {
 		getClients().then((clients) =>
@@ -32,7 +32,7 @@ function Clients() {
         <ClientModal />
 			</Box>
 			<Paper sx={{ margin: 'auto', marginTop: 3 }}>
-				<ClientTable clients={clients} />
+        <ClientTable clients={filteredClients} />
 			</Paper>
 		</Page>
 	);

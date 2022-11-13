@@ -10,6 +10,7 @@ const initialState: IApplicationState = {
 		phoneNumber: '',
 	},
 	searchCriteria: '',
+	filteredClients: [],
 };
 
 export const StateContext = createContext<{
@@ -33,10 +34,17 @@ type Action = {
 const reducer = (state: IApplicationState, action: Action) => {
 	switch (action.type) {
 		case ACTIONS.FETCH_ALL_CLIENTS:
-			return { ...state, clients: action.data };
+			return { ...state, clients: action.data, filteredClients: action.data };
 		case ACTIONS.SEARCH_CLIENT:
-			console.log(action.data);
-			return { ...state, clients: action.data };
+			const searchString = action.data.toLowerCase();
+			const filtered = state.clients.reduce((acc: IClient[], curr) => {
+				const findInField = Object.values(curr).find(field => field.toLowerCase().indexOf(searchString) !== -1);
+				if (findInField) {
+					acc.push(curr);
+				}
+				return acc;
+			}, []);
+			return { ...state, filteredClients: filtered };
 		default:
 			return state;
 	}

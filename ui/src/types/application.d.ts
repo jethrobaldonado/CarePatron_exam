@@ -10,4 +10,5 @@ interface IApplicationState {
   clients: IClient[];
   clientDetails: IClient;
   searchCriteria: string;
+  filteredClients: IClient[];
 }
