@@ -1,14 +1,17 @@
 import React from 'react';
 import { Step, StepLabel, Stepper } from '@mui/material';
 
-const Steps = () => {
-	const clientSteps = ['Personal details', 'Contact details'];
+const Steps = ({ activeStep }: { activeStep: number }) => {
+	const stepLabels = ['Personal details', 'Contact details'];
+
 	return (
 		<Stepper sx={{
 			marginTop: '2rem',
-		}}>
-			{clientSteps.map((label) => (
-				<Step>
+		}}
+				 activeStep={activeStep}
+		>
+			{stepLabels.map((label, index) => (
+				<Step key={`step_${index}`}>
 					<StepLabel>{label}</StepLabel>
 				</Step>
 			))}

@@ -1,10 +1,15 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import CreateButton from './CreateButton/CreateButton';
 import { Box, Modal, Typography } from '@mui/material';
 import Steps from './Steps/Steps';
-import Form from './Form';
-import { Close } from '@mui/icons-material';
+import { ArrowBack, Close } from '@mui/icons-material';
 import Button from '@mui/material/Button';
+import ContactDetailsForm from './Form/ContactDetailsForm';
+import useStepper from '../../hooks/useStepper';
+import PersonalDetailsForm from './Form/PersonalDetailsForm';
+import styles from './Form/form.styles';
+import useClientHook from '../../hooks/useClientHook';
+import { ContactDetailFields, PersonalDetailFields } from './Form/FormFields';
 
 const style = {
 	root: {
@@ -30,6 +35,44 @@ const ClientModal = () => {
 	const openModal = () => {
 		setModalOpen(true);
 	};
+	const {
+		data,
+		inputOnChange,
+		validateForm,
+		errorBag,
+		validated,
+		submit,
+	} = useClientHook([PersonalDetailFields, ContactDetailFields]);
+
+	const { steps, activeStep, next, back } = useStepper([
+		<PersonalDetailsForm
+			errors={errorBag}
+			data={data}
+			onChange={inputOnChange} />,
+		<ContactDetailsForm
+			errors={errorBag}
+			data={data}
+			onChange={inputOnChange} />]);
+
+	const handleNextClick = () => {
+		validateForm(activeStep);
+	};
+
+	useEffect(() => {
+		if (!Object.entries(errorBag).length && validated) {
+			if (activeStep === steps.length - 1) {
+				submit();
+			} else {
+				next();
+			}
+		}
+
+		if (!validated) {
+			setModalOpen(false);
+			back();
+		}
+
+	}, [errorBag, validated]);
 
 	return (
 		<>
@@ -42,8 +85,25 @@ const ClientModal = () => {
 						</Typography>
 						<Button onClick={() => setModalOpen(false)}><Close /></Button>
 					</Box>
-					<Steps />
-					<Form />
+					<Steps activeStep={activeStep} />
+					{steps[activeStep]}
+
+					{activeStep < steps.length - 1 && (
+						<Box sx={{
+							...styles.buttonContainer,
+							justifyContent: 'end',
+						}}>
+							<Button variant={'contained'} sx={styles.button} size={'large'}
+									onClick={() => handleNextClick()}>Continue</Button>
+						</Box>
+					)}
+					{activeStep === steps.length - 1 && (
+						<Box sx={styles.buttonContainer}>
+							<Button sx={styles.button} onClick={() => back()}><ArrowBack /> Back</Button>
+							<Button variant={'contained'} sx={styles.button} size={'large'}
+									onClick={() => handleNextClick()}>Create client</Button>
+						</Box>
+					)}
 				</Box>
 			</Modal>
 		</>

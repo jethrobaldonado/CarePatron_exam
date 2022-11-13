@@ -8,4 +8,6 @@ interface IClient {
 
 interface IApplicationState {
   clients: IClient[];
+  clientDetails: IClient;
+  searchCriteria: string;
 }
